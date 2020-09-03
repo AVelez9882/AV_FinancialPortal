@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using AV_FinancialPortal.Enums;
 using Microsoft.AspNet.Identity;
 
 namespace AV_FinancialPortal.Models
@@ -33,6 +34,8 @@ namespace AV_FinancialPortal.Models
 		public bool IsDeleted { get; set; }
 
 		public virtual ICollection<Transaction> Transactions { get; set; }
+
+		public AccountType AccountType { get; set; }
 
 		public BankAccount(decimal startingBalance, decimal warningBalance, string accountName)
 		{
