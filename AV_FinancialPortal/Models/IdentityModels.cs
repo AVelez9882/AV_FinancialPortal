@@ -58,6 +58,10 @@ namespace AV_FinancialPortal.Models
         {
             // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
             var userIdentity = await manager.CreateIdentityAsync(this, DefaultAuthenticationTypes.ApplicationCookie);
+            var hhId = HouseholdId != null ? HouseholdId.ToString() : "";
+            userIdentity.AddClaim(new Claim("HouseholdId", hhId));
+            userIdentity.AddClaim(new Claim("FullName", FullName));
+            userIdentity.AddClaim(new Claim("AvatarPath", AvatarPath));
             // Add custom user claims here
             return userIdentity;
         }
@@ -82,8 +86,6 @@ namespace AV_FinancialPortal.Models
 		public System.Data.Entity.DbSet<AV_FinancialPortal.Models.BankAccount> BankAccounts { get; set; }
 
 		public System.Data.Entity.DbSet<AV_FinancialPortal.Models.Household> Households { get; set; }
-
-		public System.Data.Entity.DbSet<AV_FinancialPortal.Models.ApplicationUser> ApplicationUsers { get; set; }
 
 		public System.Data.Entity.DbSet<AV_FinancialPortal.Models.Invitation> Invitations { get; set; }
 

@@ -4,15 +4,21 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using AV_FinancialPortal.Extensions;
+using AV_FinancialPortal.Helpers;
 using AV_FinancialPortal.Models;
+using AV_FinancialPortal.ViewModels;
+using Microsoft.AspNet.Identity;
 
 namespace AV_FinancialPortal.Controllers
 {
     public class HouseholdsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
+        private UserRoleHelper roleHelper = new UserRoleHelper();
 
         // GET: Households
         public ActionResult Index()
@@ -46,17 +52,65 @@ namespace AV_FinancialPortal.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,HouseholdName,Greeting,Created,IsDeleted")] Household household)
+        public async Task<ActionResult> Create([Bind(Include = "Id,HouseholdName,Greeting")] Household household)
         {
             if (ModelState.IsValid)
             {
+                household.Created = DateTime.Now;
                 db.Households.Add(household);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+
+                var user = db.Users.Find(User.Identity.GetUserId());
+                user.HouseholdId = household.Id;
+                roleHelper.UpdateUserRole(user.Id, "Head");
+                db.SaveChanges();
+
+                await AuthorizeExtensions.RefreshAuthentication(HttpContext, user);
+
+                return RedirectToAction("ConfigureHouse");
             }
 
             return View(household);
         }
+
+        [HttpGet]
+        //[Authorize(Roles = "Head")]
+        public ActionResult ConfigureHouse()
+        {
+            var model = new ConfigureHouseVM();
+            model.HouseholdId = (int)User.Identity.GetHouseholdId();
+            if (model.HouseholdId == null)
+            {
+                return RedirectToAction("Create");
+            }
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ConfigureHouse(ConfigureHouseVM model)
+        {
+            var bankAccount = new BankAccount(model.BankAccount.StartingBalance, model.BankAccount.WarningBalance, model.BankAccount.AccountName);
+            bankAccount.AccountType = model.BankAccount.AccountType;
+            db.BankAccounts.Add(bankAccount);
+
+            var budget = new Budget();
+            budget.HouseholdId = (int)model.HouseholdId;
+            budget.BudgetName = model.Budget.BudgetName;
+            db.Budgets.Add(budget);
+
+            db.SaveChanges();
+
+            var budgetItem = new BudgetItem();
+            budgetItem.BudgetId = budget.Id;
+            budgetItem.TargetAmount = model.BudgetItem.TargetAmount;
+            db.BudgetItems.Add(budgetItem);
+
+            db.SaveChanges();
+
+            return RedirectToAction("Index", "Home");
+        }
+
 
         // GET: Households/Edit/5
         public ActionResult Edit(int? id)

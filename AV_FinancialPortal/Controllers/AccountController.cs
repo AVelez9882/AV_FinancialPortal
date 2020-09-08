@@ -9,12 +9,14 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using AV_FinancialPortal.Models;
+using AV_FinancialPortal.Helpers;
 
 namespace AV_FinancialPortal.Controllers
 {
     [Authorize]
     public class AccountController : Controller
     {
+        private UserRoleHelper roleHelper = new UserRoleHelper();
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 
@@ -147,14 +149,19 @@ namespace AV_FinancialPortal.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Register(RegisterViewModel model)
+        public async Task<ActionResult> Register(ExtendedRegisterViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, FirstName = model.FirstName, LastName = model.LastName};
+                if (model.Avatar != null)
+                { 
+                   //TODO: GRAB CODE FROM BUGTRACKER 
+                };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    roleHelper.UpdateUserRole(user.Id, "New User");
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
                     
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771

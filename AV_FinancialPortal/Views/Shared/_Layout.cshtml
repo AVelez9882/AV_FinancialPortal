@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using AV_FinancialPortal.Extensions
+
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -30,6 +32,13 @@
         </div>
     </div>
     <div class="container body-content">
+        <h1>My Household is: @User.Identity.GetHouseholdId()</h1>
+        <h1>My Full Name is: @User.Identity.GetFullName()</h1>
+        <h1>My Avatar is: @User.Identity.GetAvatarPath()</h1>
+        @if (User.IsInRole("Head"))
+		{
+			<h1>Your Code Worked</h1>
+		}
         @RenderBody()
         <hr />
         <footer>

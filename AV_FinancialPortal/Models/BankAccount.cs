@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using AV_FinancialPortal.Enums;
+using AV_FinancialPortal.Extensions;
 using Microsoft.AspNet.Identity;
 
 namespace AV_FinancialPortal.Models
@@ -46,6 +47,7 @@ namespace AV_FinancialPortal.Models
 			Created = DateTime.Now;
 			AccountName = accountName;
 			OwnerId = HttpContext.Current.User.Identity.GetUserId();
+			HouseholdId = (int)HttpContext.Current.User.Identity.GetHouseholdId();
 		}
 
 		public BankAccount()
