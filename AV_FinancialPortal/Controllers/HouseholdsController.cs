@@ -78,7 +78,7 @@ namespace AV_FinancialPortal.Controllers
         public ActionResult ConfigureHouse()
         {
             var model = new ConfigureHouseVM();
-            model.HouseholdId = (int)User.Identity.GetHouseholdId();
+            model.HouseholdId = User.Identity.GetHouseholdId();
             if (model.HouseholdId == null)
             {
                 return RedirectToAction("Create");
@@ -90,7 +90,7 @@ namespace AV_FinancialPortal.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult ConfigureHouse(ConfigureHouseVM model)
         {
-            var bankAccount = new BankAccount(model.BankAccount.StartingBalance, model.BankAccount.WarningBalance, model.BankAccount.AccountName);
+            var bankAccount = new BankAccount(model.StartingBalance, model.BankAccount.WarningBalance, model.BankAccount.AccountName);
             bankAccount.AccountType = model.BankAccount.AccountType;
             db.BankAccounts.Add(bankAccount);
 
@@ -104,6 +104,7 @@ namespace AV_FinancialPortal.Controllers
             var budgetItem = new BudgetItem();
             budgetItem.BudgetId = budget.Id;
             budgetItem.TargetAmount = model.BudgetItem.TargetAmount;
+            budgetItem.ItemName = model.BudgetItem.ItemName;
             db.BudgetItems.Add(budgetItem);
 
             db.SaveChanges();

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Web;
 
@@ -96,6 +97,13 @@ namespace AV_FinancialPortal.Models
 
         public HttpPostedFileBase Avatar { get; set; }
 
+    }
+
+    public class AcceptInvitationVM : ExtendedRegisterViewModel
+    { 
+        public int InvitationId { get; set; }
+        public Guid Code { get; set; }
+        public int HouseholdId { get; set; }
     }
 
     public class ResetPasswordViewModel

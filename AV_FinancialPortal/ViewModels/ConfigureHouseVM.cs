@@ -8,18 +8,16 @@ namespace AV_FinancialPortal.ViewModels
 {
 	public class ConfigureHouseVM
 	{
-		public int HouseholdId { get; set; }
+		public int? HouseholdId { get; set; }
 
-		public string OwnerId { get; set; }
-
-		public string Created { get; set; }
+		public decimal StartingBalance { get; set; }
 
 		#region One of Everything
-		//public BankAccount BankAccount { get; set; }
+		public BankAccount BankAccount { get; set; }
 
-		//public Budget Budget { get; set; }
+		public Budget Budget { get; set; }
 
-		//public BudgetItem BudgetItem { get; set; }
+		public BudgetItem BudgetItem { get; set; }
 		#endregion
 
 		#region Multiple Options 
@@ -28,8 +26,8 @@ namespace AV_FinancialPortal.ViewModels
 		//public ICollection<BudgetItem> BudgetItems { get; set; }
 		#endregion
 
-		public ICollection<BankAccountWizardVM> BankAccounts { get; set; }
+		//public ICollection<BankAccountWizardVM> BankAccounts { get; set; }
 
-		public ICollection<BudgetWizardVM> Budgets { get; set; }
+		//public ICollection<BudgetWizardVM> Budgets { get; set; }
 	}
 }
